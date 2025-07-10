@@ -12,8 +12,8 @@ Ein automatischer Crawler für [HDEncode.org](https://hdencode.org), der die per
 - ✅ Telegram-Benachrichtigung bei Match inkl. Download-Link
 - ✅ Telegram-Bot-Kommandos:
   - `/status` – zeigt den aktuellen Zustand des Watchers
-  - `/suche <Titel>` – durchsucht den aktuellen RSS-Feed
-  - `/suchealle <Titel>` – durchsucht bis zu 25 Seiten der HDEncode-Webseite
+  - `/suche <Titel>` – durchsucht den aktuellen RSS-Feed nach einem bestimmten Titel
+  - `/suchealle <Titel>` – durchsucht bis zu 25 Seiten der HDEncode-Webseite nach einem bestimmten Titel
 
 ---
 
