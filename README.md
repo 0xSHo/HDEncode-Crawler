@@ -6,10 +6,10 @@ Ein automatischer Crawler für [HDEncode.org](https://hdencode.org), der die per
 
 ## ✨ Features
 
-- ✅ Automatische Synchronisierung deiner Letterboxd-Watchlist in ein Google Sheet
+- ✅ Automatische Synchronisierung der Letterboxd-Watchlist in ein Google Sheet
 - ✅ Überwachung des HDEncode-RSS-Feeds
-- ✅ Abgleich mit Watchlist aus Google Sheet (Fallback: lokale `watchlist.csv`)
-- ✅ Telegram-Benachrichtigung bei Match (inkl. Download-Link)
+- ✅ Abgleich mit der Watchlist aus dem Google Sheet (Fallback: lokale `watchlist.csv`)
+- ✅ Telegram-Benachrichtigung bei Match inkl. Download-Link
 - ✅ Telegram-Bot-Kommandos:
   - `/status` – zeigt den aktuellen Zustand des Watchers
   - `/suche <Titel>` – durchsucht den aktuellen RSS-Feed
