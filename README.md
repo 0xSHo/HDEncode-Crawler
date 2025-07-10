@@ -12,8 +12,8 @@ Ein automatischer Crawler für [HDEncode.org](https://hdencode.org), der die per
 - ✅ Telegram-Benachrichtigung bei Match inkl. Download-Link
 - ✅ Telegram-Bot-Kommandos:
   - `/status` – zeigt den aktuellen Zustand des Watchers
-  - `/suche <Titel>` – durchsucht den aktuellen RSS-Feed nach einem bestimmten Titel
-  - `/suchealle <Titel>` – durchsucht bis zu 25 Seiten der HDEncode-Webseite nach einem bestimmten Titel
+  - `/suche <Titel>` – durchsucht den aktuellen RSS-Feed nach dem angegebenen Titel
+  - `/suchealle <Titel>` – durchsucht bis zu 25 Seiten der HDEncode-Webseite nach dem angegebenen Titel
 
 ---
 
@@ -203,5 +203,5 @@ sudo systemctl daemon-reload
 | Befehl              | Funktion                                                  |
 |---------------------|-----------------------------------------------------------|
 | `/status`           | Gibt aktuellen Status & letzten Check zurück              |
-| `/suche <Titel>`    | Durchsucht den RSS-Feed nach einem Titel                      |
-| `/suchealle <Titel>`| Durchsucht bis zu 25 Seiten auf [hdencode.org](https://hdencode.org) |
+| `/suche <Titel>`    | Durchsucht den RSS-Feed nach dem angegebenen Titel                      |
+| `/suchealle <Titel>`| Durchsucht bis zu 25 Seiten auf [hdencode.org](https://hdencode.org) nach dem angegebenen Titel |
