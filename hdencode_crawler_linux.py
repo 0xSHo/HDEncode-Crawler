@@ -329,17 +329,6 @@ def send_telegram_message(message):
         logging.error(f"Telegram-Sendefehler: {e}")
 
 
-def telegram_status(update, context):
-    """Antwortet auf /status mit Info zum Watcher."""
-    global last_check_time
-    msg = "✅ HDEncode Watcher läuft\n"
-    if last_check_time:
-        msg += f"Letzter Check: {last_check_time.strftime('%Y-%m-%d %H:%M:%S')}"
-    else:
-        msg += "Noch kein Check durchgeführt"
-    context.bot.send_message(chat_id=update.effective_chat.id, text=msg)
-
-
 def handle_search(update: Update, context: CallbackContext):
     if not context.args:
         update.message.reply_text("🔍 Bitte gib einen Suchbegriff an. Beispiel: /suche inception")
@@ -428,7 +417,6 @@ def start_telegram_bot():
     dp.add_handler(CommandHandler("suche", handle_search))
     dp.add_handler(CommandHandler("status", handle_status))
     dp.add_handler(CommandHandler("suchealle", handle_search_all))
-    updater.start_polling()
     logging.info("Telegram-Bot läuft und wartet auf Kommandos.")
 
 
@@ -511,12 +499,11 @@ def run_watcher():
 
     try:
         # Initialisierung
-        # create_example_csv()
         seen_links = load_seen_links()
         watchlist = load_watchlist_from_drive()
 
         if not watchlist:
-            send_telegram_message("⚠️KKonnte Watchlist nicht von Google Drive laden. Fallback auf lokale csv-Datei")
+            send_telegram_message("⚠️ Konnte Watchlist nicht von Google Drive laden. Fallback auf lokale csv-Datei")
             watchlist = load_watchlist_from_csv()
 
         if not watchlist:
