@@ -9,21 +9,22 @@ import threading
 import requests
 import feedparser
 import logging
-# logging.disable(logging.CRITICAL)
 import csv
 import signal
 import sys
 import re
 import gspread
 import warnings
-warnings.filterwarnings("ignore", category=UserWarning)
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 from bs4 import BeautifulSoup
 from datetime import datetime
 from telegram.ext import Updater, CommandHandler, CallbackContext
 from telegram import Update
 from io import StringIO
 from oauth2client.service_account import ServiceAccountCredentials
+
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # === KONFIGURATION ===
 TELEGRAM_TOKEN = ""
