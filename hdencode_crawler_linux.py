@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-HDEncode Watcher - Überwacht RSS-Feed und benachrichtigt bei Watchlist-Matches.
-"""
-
 import os
 import time
 import threading
