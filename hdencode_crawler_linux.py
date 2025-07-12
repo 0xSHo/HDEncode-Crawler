@@ -48,20 +48,6 @@ running = threading.Event()
 running.set()
 
 
-def normalize(text):
-    """Erweiterte Normalisierung für Vergleiche."""
-    if not text:
-        return ""
-
-    # Entferne alle Nicht-Alphanumerischen Zeichen
-    text = re.sub(r'[^a-z0-9\s]', '', text.lower())
-
-    # Entferne mehrfache Leerzeichen
-    text = re.sub(r'\s+', ' ', text).strip()
-
-    return text
-
-
 def normalize_title_for_matching(title):
     """Normalisiert Titel für bessere Übereinstimmung."""
     if not title:
@@ -94,56 +80,88 @@ def check_year_match(film_year, feed_title):
 
     return film_year in years_in_feed
 
-
-def is_problematic_substring_match(film_name_raw, feed_title_raw):
-    """
-    Prüft auf problematische Kontexte wie "beast" in "gospel of the beast".
-    Nutzt moderat normalisierte Texte, um Wortgrenzen zu erhalten.
-    """
-    film_clean = normalize_title_for_matching(film_name_raw)
-    feed_clean = normalize_title_for_matching(feed_title_raw)
-
-    problematic_cases = [
-        ("beast", "gospel"),
-        ("beast", "beauty"),
-        ("god", "godzilla"),
-        ("war", "star"),  # Beispiel: "War" nicht in "Star Wars"
-    ]
-
-    for keyword, context in problematic_cases:
-        if keyword in film_clean and context in feed_clean:
-            return True
-    return False
+def is_likely_substring_match(film_title, feed_title):
+    """Prüft ob der Film-Titel wahrscheinlich nur ein Substring ist."""
+    words_film = film_title.split()
+    words_feed = feed_title.split()
+    
+    # Finde Position der Film-Wörter im Feed
+    film_positions = []
+    for word in words_film:
+        try:
+            pos = words_feed.index(word)
+            film_positions.append(pos)
+        except ValueError:
+            return False
+    
+    # Prüfe ob die Wörter zusammenhängend sind
+    if not film_positions:
+        return False
+        
+    film_positions.sort()
+    
+    # Sind die Positionen aufeinanderfolgend?
+    for i in range(1, len(film_positions)):
+        if film_positions[i] != film_positions[i-1] + 1:
+            return False
+    
+    start_pos = film_positions[0]
+    end_pos = film_positions[-1]
+    
+    # Prüfe ob davor/danach noch relevante Wörter stehen
+    # (außer Jahren, "the", "a", etc.)
+    irrelevant_words = {'the', 'a', 'an', 'of', 'and', 'in', 'on', 'at', 'to'}
+    
+    # Wörter vor dem Match
+    words_before = words_feed[:start_pos]
+    relevant_before = [w for w in words_before if w not in irrelevant_words and not re.match(r'\d{4}', w)]
+    
+    # Wörter nach dem Match  
+    words_after = words_feed[end_pos + 1:]
+    relevant_after = [w for w in words_after if w not in irrelevant_words and not re.match(r'\d{4}', w)]
+    
+    # Wenn relevante Wörter davor UND danach stehen, ist es wahrscheinlich ein Substring
+    return len(relevant_before) > 0 and len(relevant_after) > 0
 
 
 def is_title_match(film_name, film_year, feed_title):
-    """Exaktes Wortgruppen-Matching nur bei eigenständiger Position."""
-    logging.debug(
-        f"Prüfe Match: '{film_name}' ({film_year}) gegen '{feed_title}'"
-    )
-
+    """Verbesserte Matching-Logik für zusammenhängende Titel."""
+    logging.debug(f"Prüfe Match: '{film_name}' ({film_year}) gegen '{feed_title}'")
+    
     def normalize(text):
+        """Einheitliche Normalisierung."""
         text = text.lower()
+        # Punkte durch Leerzeichen ersetzen (für Feed-Titel wie "the.beast.2023")
         text = text.replace(".", " ")
+        # Andere Sonderzeichen entfernen
         text = re.sub(r"[^\w\s]", "", text)
+        # Mehrfache Leerzeichen zu einem
         return re.sub(r"\s+", " ", text).strip()
-
-    film_phrase = normalize(film_name)
-    feed_text = normalize(feed_title)
-
-    words = film_phrase.split()
-    pattern = (
-        r"(?:^|\b(19|20)\d{2}\b\s*)\b"
-        + r"\s+".join(map(re.escape, words))
-        + r"\b"
-    )
-
-    logging.debug(f"Verwendetes Pattern: {pattern}")
-    if re.search(pattern, feed_text):
-        logging.debug(f"🎯 Gültige Wortgruppe erkannt: '{film_phrase}' in Feed")
+    
+    film_normalized = normalize(film_name)
+    feed_normalized = normalize(feed_title)
+    
+    # Erstelle Pattern für zusammenhängende Wortgruppe
+    words = film_normalized.split()
+    if not words:
+        return False
+    
+    # Pattern: Wortgrenze + alle Wörter direkt hintereinander + Wortgrenze
+    pattern = r'\b' + r'\s+'.join(re.escape(word) for word in words) + r'\b'
+    
+    logging.debug(f"Pattern: {pattern}")
+    logging.debug(f"Suche in: '{feed_normalized}'")
+    
+    if re.search(pattern, feed_normalized):
+        # Zusätzliche Validierung: Prüfe ob es nicht Teil eines längeren Titels ist
+        if is_likely_substring_match(film_normalized, feed_normalized):
+            logging.debug("⚠️ Wahrscheinlich Substring-Match - überspringe")
+            return False
+            
+        logging.debug("✅ Gültiger Match gefunden")
         return check_year_match(film_year, feed_title)
-
-    logging.debug("⛔ Kein gültiger Titel-Block gefunden")
+    
+    logging.debug("❌ Kein Match")
     return False
 
 
