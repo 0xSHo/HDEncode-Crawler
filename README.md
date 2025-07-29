@@ -1,6 +1,6 @@
-# 🎬 HDEncode Crawler
+# 🎬 HDEncode scraper
 
-Ein automatischer Crawler für [HDEncode.org](https://hdencode.org), der die persönliche Letterboxd-Watchlist regelmäßig mit aktuellen Releases abgleicht und bei einem Treffer automatisch eine Benachrichtigung über Telegram versendet.
+Ein automatischer scraper für [HDEncode.org](https://hdencode.org), der die persönliche Letterboxd-Watchlist regelmäßig mit aktuellen Releases abgleicht und bei einem Treffer automatisch eine Benachrichtigung über Telegram versendet.
 
 ---
 
